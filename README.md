@@ -1,125 +1,205 @@
 # Event Platform API
 
-API REST para una Plataforma de Eventos e Inscripciones, desarrollada con Node.js, Express y MongoDB.
+REST API for an Event Registration Platform built with Node.js, Express, MongoDB and Mongoose following a layered architecture.
 
-## Temática del proyecto
+## Project Overview
 
-El proyecto representa la base backend de una plataforma donde los usuarios podrán registrarse, iniciar sesión, consultar eventos e inscribirse a actividades.
+Event Platform API is designed to manage users and events through a secure, scalable, and maintainable backend architecture.
 
-Esta primera iteración se enfoca en la arquitectura inicial del proyecto, separando responsabilidades en rutas, controladores, servicios, repositorios, DAOs y modelos.
+The application follows a layered architecture that separates request handling, business logic, data access, and persistence, making it easier to extend and maintain over time.
 
-## Tecnologías utilizadas
+## Features
 
-- Node.js
-- Express
-- MongoDB
-- Mongoose
-- dotenv
-- JavaScript ES Modules
+* User registration
+* Secure password hashing with bcrypt
+* MongoDB persistence with Mongoose
+* Layered architecture (Route → Controller → Service → Repository → DAO → Model)
+* Global error handling
+* Email validation and normalization
+* Duplicate user detection
 
-## Instalación
+## Technologies
 
-Clonar el repositorio:
+* Node.js
+* Express
+* MongoDB
+* Mongoose
+* bcrypt
+* dotenv
+* JavaScript ES Modules
+
+## Installation
+
+Clone the repository:
 
 ```bash
 git clone https://github.com/HSC2121/event-platform-api.git
 cd event-platform-api
+```
 
-Instalar dependencias:
+Install dependencies:
 
+```bash
 npm install
-Configuración de variables de entorno
+```
 
-Crear un archivo .env en la raíz del proyecto usando como referencia .env.example.
+## Environment Variables
 
+Create a `.env` file in the project root using `.env.example` as reference.
+
+Example:
+
+```env
 PORT=8080
 NODE_ENV=development
 MONGO_URL=mongodb://localhost:27017/event_platform
-JWT_SECRET=your_jwt_secret_here
+JWT_SECRET=your_secret_key
+```
 
-Ejecución del proyecto
+## Running the Project
 
-Modo desarrollo:
+Development:
 
+```bash
 npm run dev
+```
 
-Modo producción:
+Production:
 
+```bash
 npm start
+```
 
-Ejecutar pruebas:
+Tests:
 
+```bash
 npm test
-Estructura de carpetas
+```
+
+## Project Structure
+
+```txt
 src/
 ├── app.js
 ├── server.js
 ├── config/
-│   ├── env.config.js
-│   └── database.config.js
 ├── routes/
-│   ├── index.routes.js
-│   ├── health.routes.js
-│   ├── events.routes.js
-│   └── sessions.routes.js
 ├── controllers/
-│   ├── health.controller.js
-│   ├── events.controller.js
-│   └── sessions.controller.js
 ├── services/
-│   ├── events.service.js
-│   └── sessions.service.js
 ├── repositories/
-│   ├── events.repository.js
-│   └── sessions.repository.js
 ├── dao/
-│   ├── events.dao.js
-│   └── users.dao.js
 ├── models/
-│   ├── event.model.js
-│   └── user.model.js
 ├── middlewares/
-│   └── error.middleware.js
 └── utils/
-Documentación de la API
-Health check
+```
 
-Verifica que el servidor esté funcionando.
+## API Documentation
 
+### Health Check
+
+```http
 GET /api/health
+```
 
-Respuesta esperada:
+Returns the current server status.
 
-{
-  "status": "success",
-  "message": "Server is active"
-}
-Events
+---
 
-Obtiene el listado de eventos desde la capa DAO.
+### Get Events
 
+```http
 GET /api/events
+```
 
-Respuesta esperada:
+Returns the list of registered events.
 
+---
+
+### User Registration
+
+```http
+POST /api/sessions/register
+```
+
+Request body:
+
+```json
 {
-  "status": "success",
-  "payload": []
-}
-
-Flujo implementado:
-
-Route -> Controller -> Service -> Repository -> DAO -> Model
-Sessions
-
-Ruta inicial para el recurso sessions. Todavía no incluye lógica de autenticación.
-
-GET /api/sessions
-
-Respuesta esperada:
-
-{
-  "status": "success",
-  "message": "Sessions route available"
+  "first_name": "Hernan",
+  "last_name": "Cortacans",
+  "email": "hernan@test.com",
+  "password": "123456"
 }
 ```
+
+Successful response:
+
+```json
+{
+  "status": "success",
+  "message": "User registered successfully",
+  "payload": {
+    "id": "...",
+    "first_name": "Hernan",
+    "last_name": "Cortacans",
+    "email": "hernan@test.com",
+    "role": "user"
+  }
+}
+```
+
+## Registration Features
+
+The registration endpoint performs:
+
+* Required field validation
+* Email format validation
+* Password minimum length validation
+* Email normalization (trim + lowercase)
+* Duplicate email verification
+* Password hashing using bcrypt
+* MongoDB persistence with Mongoose
+* Password exclusion from API responses
+* Default user role assignment
+
+## Architecture
+
+The project follows a layered architecture:
+
+```txt
+Route
+↓
+Controller
+↓
+Service
+↓
+Repository
+↓
+DAO
+↓
+Model
+↓
+MongoDB
+```
+
+This separation keeps business logic, request handling, and database operations independent, making the application easier to maintain, test, and scale.
+
+## Roadmap
+
+Current implementation includes:
+
+* User registration
+* Secure password hashing
+* MongoDB integration
+* Event endpoints
+* Layered backend architecture
+
+Upcoming features:
+
+* User authentication (Login)
+* JWT authentication
+* Current user endpoint
+* Role-based authorization
+* Event registration
+* Capacity management
+* Ticket generation
