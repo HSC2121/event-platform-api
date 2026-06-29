@@ -122,3 +122,4 @@ Respuesta esperada:
   "status": "success",
   "message": "Sessions route available"
 }
+```
