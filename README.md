@@ -125,10 +125,10 @@ Request body:
 
 ```json
 {
-  "first_name": "Hernan",
-  "last_name": "Cortacans",
-  "email": "hernan@test.com",
-  "password": "123456"
+  "first_name": "John",
+  "last_name": "Doe",
+  "email": "john.doe@example.com",
+  "password": "securePassword123"
 }
 ```
 
@@ -140,9 +140,9 @@ Successful response:
   "message": "User registered successfully",
   "payload": {
     "id": "...",
-    "first_name": "Hernan",
-    "last_name": "Cortacans",
-    "email": "hernan@test.com",
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "john.doe@example.com",
     "role": "user"
   }
 }
