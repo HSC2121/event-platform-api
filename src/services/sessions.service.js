@@ -1,5 +1,6 @@
 import { UsersRepository } from "../repositories/users.repository.js";
-import { createHash } from "../utils/password.utils.js";
+import { createHash, isValidPassword } from "../utils/hash.js";
+import { generateToken } from "../utils/jwt.js";
 
 const usersRepository = new UsersRepository();
 
@@ -55,10 +56,61 @@ export class SessionsService {
     };
   }
 
+  async login(credentials) {
+    const { email, password } = credentials;
+
+    if (!email || !password) {
+      const error = new Error("Email and password are required");
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const user = await usersRepository.findByEmail(normalizedEmail);
+
+    if (!user) {
+      const error = new Error("Invalid credentials");
+      error.statusCode = 401;
+      throw error;
+    }
+
+    const passwordMatches = await isValidPassword(password, user.password);
+
+    if (!passwordMatches) {
+      const error = new Error("Invalid credentials");
+      error.statusCode = 401;
+      throw error;
+    }
+
+    const token = generateToken({
+      id: user._id,
+      email: user.email,
+      role: user.role
+    });
+
+    return {
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role
+      }
+    };
+  }
+
+  getCurrentUser(user) {
+    return {
+      id: user.id,
+      email: user.email,
+      role: user.role
+    };
+  }
+
   getStatus() {
     return {
       message: "Sessions service available",
-      authEnabled: false
+      authEnabled: true
     };
   }
 }
