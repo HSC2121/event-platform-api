@@ -5,7 +5,7 @@ const sessionsService = new SessionsService();
 
 export const register = async (req, res, next) => {
   try {
-    const user = await sessionsService.register(req.body);
+    const user = sessionsService.getRegisteredUser(req.user);
 
     res.status(201).json({
       status: "success",
@@ -19,7 +19,9 @@ export const register = async (req, res, next) => {
 
 export const login = async (req, res, next) => {
   try {
-    const { token, user } = await sessionsService.login(req.body);
+    const token = sessionsService.generateAuthToken(req.user);
+
+    const user = sessionsService.getPublicUser(req.user);
 
     res
       .cookie("currentUser", token, {
@@ -39,29 +41,41 @@ export const login = async (req, res, next) => {
   }
 };
 
-export const current = (req, res) => {
-  const user = sessionsService.getCurrentUser(req.user);
+export const current = async (req, res, next) => {
+  try {
+    const user = sessionsService.getPublicUser(req.user);
 
-  res.status(200).json({
-    status: "success",
-    payload: user,
-  });
+    res.status(200).json({
+      status: "success",
+      payload: user,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const logout = (req, res) => {
-  res.clearCookie("currentUser");
+export const logout = async (req, res, next) => {
+  try {
+    res.clearCookie("currentUser");
 
-  res.status(200).json({
-    status: "success",
-    message: "Logout successful",
-  });
+    res.status(200).json({
+      status: "success",
+      message: "Logout successful",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const getSessionsStatus = (req, res) => {
-  const status = sessionsService.getStatus();
+export const getSessionsStatus = async (req, res, next) => {
+  try {
+    const status = sessionsService.getStatus();
 
-  res.status(200).json({
-    status: "success",
-    payload: status,
-  });
+    res.status(200).json({
+      status: "success",
+      payload: status,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
